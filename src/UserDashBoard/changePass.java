@@ -158,37 +158,40 @@ public class changePass extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try{
-        DBconnector dbc = new DBconnector();
-        Session sess = Session.getInstance();
+            DBconnector dbc = new DBconnector();
+            Session sess = Session.getInstance();
 
-        String query = "SELECT * FROM tblassign WHERE u_id = '"+ sess.getUid() +"'";
-        ResultSet rs = dbc.getData(query);
-        
-        if(rs.next()){
-            String olddbpass = rs.getString("u_password");
-            String oldhash = passwordHasher.hashPassword(oldpass.getText());
-            
-            if (oldpass.getText().isEmpty() || newpass.getText().isEmpty() || conpass.getText().isEmpty()){
-                JOptionPane.showMessageDialog(null, "All fields must be required!");
-            } else if (newpass.getText().length() < 8 || conpass.getText().length() < 8){
-                JOptionPane.showMessageDialog(null, "Password must be 8 aboves!");
-            } else {
-                if(olddbpass.equals(oldhash)){
-                    if (newpass.getText().equals(conpass.getText())){
-                        
-                        String npass = passwordHasher.hashPassword(newpass.getText());
-                        dbc.updateData("UPDATE tblassign SET u_password = '"+ npass +"'WHERE u_id = '"+ sess.getUid()+"'");
-                        LoginForm lf = new LoginForm();
-                        lf.setVisible(true);
-                        this.dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Password doesnt match!");
-                    }    
-                }else{
-                    JOptionPane.showMessageDialog(null, "Old Password is incorrect!");
-                }
-            }      
-        }
+            String query = "SELECT * FROM tblassign WHERE u_id = '"+ sess.getUid() +"'";
+            ResultSet rs = dbc.getData(query);
+
+            if(rs.next()){
+                String olddbpass = rs.getString("u_password");
+                String oldhash = passwordHasher.hashPassword(oldpass.getText());
+
+                if (oldpass.getText().isEmpty() || newpass.getText().isEmpty() || conpass.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(null, "All fields must be required!");
+                } else if (newpass.getText().length() < 8 || conpass.getText().length() < 8){
+                    JOptionPane.showMessageDialog(null, "Password must be 8 aboves!");
+                } else {
+                    if(olddbpass.equals(oldhash)){
+                        if (newpass.getText().equals(conpass.getText())){
+                            if (oldpass.getText().equals(newpass.getText()) || oldpass.getText().equals(newpass.getText())){
+                                JOptionPane.showMessageDialog(null, "Please ensure your new password is different from your previous one!");
+                            } else {
+                                String npass = passwordHasher.hashPassword(newpass.getText());
+                                dbc.updateData("UPDATE tblassign SET u_password = '"+ npass +"'WHERE u_id = '"+ sess.getUid()+"'");
+                                LoginForm lf = new LoginForm();
+                                lf.setVisible(true);
+                                this.dispose();
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Password doesnt match!");
+                        }    
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Old Password is incorrect!");
+                    } 
+                }      
+            }
         }catch(SQLException | NoSuchAlgorithmException ex){
             System.out.println(""+ex);
         }
