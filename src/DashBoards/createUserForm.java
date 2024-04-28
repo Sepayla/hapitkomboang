@@ -6,10 +6,14 @@
 package DashBoards;
 
 import DBconnector.DBconnector;
+import DBconnector.passwordHasher;
 import static RegistrationForm.RegistrationForm.emails;
 import static RegistrationForm.RegistrationForm.usernames;
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -139,7 +143,6 @@ public class createUserForm extends javax.swing.JFrame {
 
         add.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         add.setText("Add");
-        add.setEnabled(false);
         add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addActionPerformed(evt);
@@ -272,6 +275,7 @@ public class createUserForm extends javax.swing.JFrame {
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 100, 490));
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
@@ -289,13 +293,17 @@ public class createUserForm extends javax.swing.JFrame {
 
             DBconnector connector = new DBconnector();
 
-            if(connector.insertData("INSERT INTO tblassign(u_fname, u_lname, u_email, u_username, u_password, u_type, u_status)VALUES ('" + fn.getText() + "','" + ln.getText() + "','" + em.getText() + "','" + un.getText() + "','" + upass.getText() + "','" + utype.getSelectedItem() + "','"+ustat.getSelectedItem()+"')")){
-                JOptionPane.showMessageDialog(null, "Registered Successfully");
-                UsersForm uForm = new UsersForm();
-                uForm.setVisible(true);
-                this.dispose();
-            }else{
-                JOptionPane.showMessageDialog(null, "Connection Error!");
+            try {
+                if(connector.insertData("INSERT INTO tblassign(u_fname, u_lname, u_email, u_username, u_password, u_type, u_status)VALUES ('" + fn.getText() + "','" + ln.getText() + "','" + em.getText() + "','" + un.getText() + "','" + passwordHasher.hashPassword(upass.getText()) + "','" + utype.getSelectedItem() + "','"+ustat.getSelectedItem()+"')")){
+                    JOptionPane.showMessageDialog(null, "Registered Successfully");
+                    UsersForm uForm = new UsersForm();
+                    uForm.setVisible(true);
+                    this.dispose();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Connection Error!");
+                }
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(createUserForm.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_addActionPerformed

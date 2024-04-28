@@ -170,6 +170,8 @@ public class changePass extends javax.swing.JFrame {
             
             if (oldpass.getText().isEmpty() || newpass.getText().isEmpty() || conpass.getText().isEmpty()){
                 JOptionPane.showMessageDialog(null, "All fields must be required!");
+            } else if (newpass.getText().length() < 8 || conpass.getText().length() < 8){
+                JOptionPane.showMessageDialog(null, "Password must be 8 aboves!");
             } else {
                 if(olddbpass.equals(oldhash)){
                     if (newpass.getText().equals(conpass.getText())){
@@ -189,7 +191,6 @@ public class changePass extends javax.swing.JFrame {
         }
         }catch(SQLException | NoSuchAlgorithmException ex){
             System.out.println(""+ex);
-        
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
